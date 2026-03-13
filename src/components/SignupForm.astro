@@ -1,0 +1,173 @@
+---
+import Section from "@/components/ui/Section.astro";
+---
+
+<Section id="signup" bg="white" width="md">
+  <div class="text-center">
+    <p class="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-green">Free skills</p>
+    <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+      Get the full skill set. <em class="text-green">Free.</em>
+    </h2>
+    <p class="mx-auto mb-12 max-w-lg text-lg text-ink-muted">
+      Sign up and we'll send you all the Brown2Green skills — ready to install in Claude Code, Cursor, or any AI coding&nbsp;tool.
+    </p>
+  </div>
+
+  <form id="signup-form" class="mx-auto max-w-lg">
+    <div class="space-y-4 rounded-2xl border border-border bg-surface p-6 shadow-sm sm:p-8">
+      <!-- Name -->
+      <div>
+        <label for="signup-name" class="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-faint">Name</label>
+        <input
+          id="signup-name"
+          type="text"
+          required
+          placeholder="Jane Smith"
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 font-mono text-sm text-ink placeholder:text-ink-faint focus:border-green focus:outline-none"
+        />
+      </div>
+
+      <!-- Company -->
+      <div>
+        <label for="signup-company" class="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-faint">Company</label>
+        <input
+          id="signup-company"
+          type="text"
+          required
+          placeholder="Acme Corp"
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 font-mono text-sm text-ink placeholder:text-ink-faint focus:border-green focus:outline-none"
+        />
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="signup-email" class="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-faint">Email</label>
+        <input
+          id="signup-email"
+          type="email"
+          required
+          placeholder="jane@acme.com"
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 font-mono text-sm text-ink placeholder:text-ink-faint focus:border-green focus:outline-none"
+        />
+      </div>
+
+      <!-- Legacy Platform -->
+      <div>
+        <label for="signup-platform" class="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-faint">Legacy platform</label>
+        <input
+          id="signup-platform"
+          type="text"
+          required
+          placeholder="e.g. Laravel 8, Ruby on Rails v3, .NET Framework 4.x"
+          class="w-full rounded-xl border border-border bg-white px-4 py-3 font-mono text-sm text-ink placeholder:text-ink-faint focus:border-green focus:outline-none"
+        />
+      </div>
+
+      <!-- How they use AI -->
+      <div>
+        <label for="signup-ai-usage" class="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-faint">How do you currently use AI in&nbsp;development?</label>
+        <textarea
+          id="signup-ai-usage"
+          rows={3}
+          required
+          placeholder="e.g. Cursor for autocomplete, Claude Code for refactoring, ChatGPT for debugging..."
+          class="w-full resize-none rounded-xl border border-border bg-white px-4 py-3 font-mono text-sm text-ink placeholder:text-ink-faint focus:border-green focus:outline-none"
+        ></textarea>
+      </div>
+
+      <!-- Submit -->
+      <button
+        id="signup-btn"
+        type="submit"
+        class="relative w-full cursor-pointer rounded-xl bg-green px-6 py-3.5 font-mono text-sm font-bold text-white transition-all hover:bg-green/90 active:scale-[0.98]"
+      >
+        <span id="signup-btn-text">Get the skills — free</span>
+        <span id="signup-btn-spinner" class="absolute inset-0 hidden items-center justify-center">
+          <svg class="h-5 w-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z"></path>
+          </svg>
+        </span>
+      </button>
+    </div>
+
+    <p class="mt-4 text-center font-mono text-xs text-ink-faint">
+      No spam. We'll send the skills and occasional updates.
+    </p>
+  </form>
+
+  <!-- Success state -->
+  <div id="signup-success" class="mx-auto hidden max-w-lg">
+    <div class="rounded-2xl border border-green/30 bg-green-light p-8 text-center">
+      <div class="mb-4 text-4xl">🌱</div>
+      <h3 class="mb-2 font-display text-2xl text-ink">Check your email!</h3>
+      <p class="text-sm text-ink-muted">
+        We've sent you a link to download all the Brown2Green skills. Time to turn that brownfield&nbsp;green.
+      </p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <p id="signup-error" class="mx-auto mt-4 hidden max-w-lg text-center font-mono text-sm text-fail"></p>
+</Section>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const form = document.getElementById("signup-form") as HTMLFormElement | null;
+    const btn = document.getElementById("signup-btn") as HTMLButtonElement | null;
+    const btnText = document.getElementById("signup-btn-text") as HTMLElement | null;
+    const btnSpinner = document.getElementById("signup-btn-spinner") as HTMLElement | null;
+    const successEl = document.getElementById("signup-success") as HTMLElement | null;
+    const errorEl = document.getElementById("signup-error") as HTMLElement | null;
+
+    if (!form || !btn || !btnText || !btnSpinner || !successEl || !errorEl) return;
+
+    function resetBtn(): void {
+      btn!.disabled = false;
+      btnText!.classList.remove("opacity-0");
+      btnSpinner!.classList.add("hidden");
+      btnSpinner!.classList.remove("flex");
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorEl.classList.add("hidden");
+
+      const name = (document.getElementById("signup-name") as HTMLInputElement).value.trim();
+      const company = (document.getElementById("signup-company") as HTMLInputElement).value.trim();
+      const email = (document.getElementById("signup-email") as HTMLInputElement).value.trim();
+      const platform = (document.getElementById("signup-platform") as HTMLInputElement).value.trim();
+      const aiUsage = (document.getElementById("signup-ai-usage") as HTMLTextAreaElement).value.trim();
+
+      if (!name || !company || !email || !platform || !aiUsage) return;
+
+      btn.disabled = true;
+      btnText.classList.add("opacity-0");
+      btnSpinner.classList.remove("hidden");
+      btnSpinner.classList.add("flex");
+
+      try {
+        const res = await fetch("/api/signup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, company, email, platform, aiUsage }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          form.classList.add("hidden");
+          successEl.classList.remove("hidden");
+        } else {
+          errorEl.textContent = data.error ?? "Something went wrong — try again";
+          errorEl.classList.remove("hidden");
+          resetBtn();
+        }
+      } catch {
+        errorEl.textContent = "Network error — try again";
+        errorEl.classList.remove("hidden");
+        resetBtn();
+      }
+    });
+  });
+</script>

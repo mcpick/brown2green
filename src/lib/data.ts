@@ -6,7 +6,7 @@ export interface Phase {
   prompt: string;
 }
 
-export interface Agent {
+export interface Skill {
   name: string;
   role: string;
   desc: string;
@@ -22,7 +22,7 @@ export interface SimpleStep {
 export interface ComplexStep {
   num: string;
   title: string;
-  agent: string;
+  skill: string;
 }
 
 export const phases: Phase[] = [
@@ -32,7 +32,7 @@ export const phases: Phase[] = [
     desc: "Map the architecture, identify pain points, and establish a baseline for AI readiness.",
     details: [
       "Run module-overview scans across your codebase",
-      "Identify tightly-coupled components AI agents struggle with",
+      "Identify tightly-coupled components that AI struggles with",
       "Document implicit knowledge that only lives in developers' heads",
       "Establish conventions files (CLAUDE.md, AGENTS.md)",
     ],
@@ -41,7 +41,7 @@ export const phases: Phase[] = [
   {
     num: "02",
     title: "Document",
-    desc: "Create the documentation layer that makes your codebase navigable by AI agents.",
+    desc: "Create the documentation layer that makes your codebase navigable by AI.",
     details: [
       "Create docs/: requirements, plans, features, manual",
       "Document existing features with architecture docs",
@@ -53,10 +53,10 @@ export const phases: Phase[] = [
   {
     num: "03",
     title: "Guard",
-    desc: "Set up hooks and guardrails that prevent AI agents from breaking things.",
+    desc: "Set up hooks and guardrails that prevent AI from breaking things.",
     details: [
       "Configure pre-commit hooks for lint, type-check, build",
-      "Define file access boundaries for agents",
+      "Define file access boundaries — what AI can and can't touch",
       "Set up preflight checks before any commit",
       "Create impact analysis to predict blast radius",
     ],
@@ -65,12 +65,12 @@ export const phases: Phase[] = [
   {
     num: "04",
     title: "Specialise",
-    desc: "Build specialised sub-agents with focused skills. Each agent owns a specific domain.",
+    desc: "Install focused skills that give your AI the right context for each task.",
     details: [
-      "Create task-specific agents: planner, implementer, reviewer",
-      "Give each agent only the context it needs",
+      "Install task-specific skills: planner, implementer, reviewer",
+      "Each skill scopes context to just what's needed",
       "Define slash commands for common operations",
-      "Build project-specific skills for your stack",
+      "Build project-specific skills tailored to your stack",
     ],
     prompt: "@feature-planner [feature] → File-by-file implementation plan",
   },
@@ -91,20 +91,20 @@ export const phases: Phase[] = [
     title: "Iterate",
     desc: "Each cycle improves AI readiness. Normalised bad code gets identified and refactored.",
     details: [
-      "Run regular codebase health checks with agents",
-      "Identify 'normalised bad code' agents struggle with",
+      "Run regular codebase health checks with your skills",
+      "Identify 'normalised bad code' that AI struggles with",
       "Refactor incrementally — each PR makes the next easier",
-      "Measure: fewer agent errors, faster delivery",
+      "Measure: fewer errors, faster delivery, better code quality",
     ],
     prompt: "@reviewer → Reviews diff, reports issues by severity, gives merge verdict",
   },
 ];
 
-export const agents: Agent[] = [
+export const skills: Skill[] = [
   { name: "codebase-qa", role: "Knowledge", desc: "Answers questions about how any part of the codebase works.", usage: "@codebase-qa How does the auth flow work?" },
   { name: "impact-analyser", role: "Safety", desc: "Predicts what will break before you change anything.", usage: "@impact-analyser src/auth/login.ts" },
   { name: "feature-planner", role: "Planning", desc: "Studies existing patterns. Produces file-by-file plans.", usage: "@feature-planner Add SSO via SAML" },
-  { name: "feature-implementer", role: "Building", desc: "Writes all files following conventions. Verifies build.", usage: "@feature-implementator docs/plans/CCG-123.md" },
+  { name: "feature-implementer", role: "Building", desc: "Writes all files following conventions. Verifies build.", usage: "@feature-implementer docs/plans/CCG-123.md" },
   { name: "preflight", role: "QA", desc: "ESLint + TypeScript + production build. Your quality gate.", usage: "@preflight" },
   { name: "reviewer", role: "Review", desc: "Reviews diff. Reports blocker / should-fix / nit.", usage: "@reviewer" },
   { name: "committer", role: "Git", desc: "Proposes logical commit breakdown. Say 'go' to execute.", usage: "@committer" },
@@ -121,10 +121,10 @@ export const simpleSteps: SimpleStep[] = [
 ];
 
 export const complexSteps: ComplexStep[] = [
-  { num: "1", title: "Plan", agent: "feature-planner" },
-  { num: "2", title: "Implement", agent: "feature-implementer" },
-  { num: "3", title: "QA", agent: "preflight" },
-  { num: "4", title: "Review", agent: "reviewer" },
-  { num: "5", title: "Commit", agent: "committer" },
-  { num: "6", title: "Document", agent: "documenter" },
+  { num: "1", title: "Plan", skill: "feature-planner" },
+  { num: "2", title: "Implement", skill: "feature-implementer" },
+  { num: "3", title: "QA", skill: "preflight" },
+  { num: "4", title: "Review", skill: "reviewer" },
+  { num: "5", title: "Commit", skill: "committer" },
+  { num: "6", title: "Document", skill: "documenter" },
 ];

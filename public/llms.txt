@@ -1,54 +1,47 @@
 # Brown2Green
 
-> Turn your brownfield codebase into an AI-ready project.
+> Turn your brownfield codebase into an AI-ready project with specialised skills, guardrails, and workflows.
 
-Brown2Green is a methodology for making legacy codebases work effectively with AI coding agents like Claude Code, Cursor, and Windsurf.
+## About
 
-## Core Concept
+Brown2Green is a methodology for making legacy codebases work with AI coding tools. It provides a step-by-step process with specialised skills that give AI the right context for each task — because bad code that's been around long enough starts looking normal.
 
-Brownfield codebases have implicit conventions, undocumented side effects, and tightly-coupled modules that AI agents can't navigate. Brown2Green provides a structured approach to fix this.
+## Methodology
 
-## Six-Phase Methodology
+Six phases to AI readiness:
 
-1. **Assess** — Map architecture, identify pain points, establish AI readiness baseline
-2. **Document** — Create documentation that makes codebases navigable by AI agents
-3. **Guard** — Set up hooks and guardrails to prevent AI agents from breaking things
-4. **Specialise** — Build specialised sub-agents with focused skills per domain
-5. **Workflow** — Define repeatable workflows with consistent quality pipelines
-6. **Iterate** — Continuous improvement, each cycle increases AI readiness
+1. **Assess** — Map architecture, identify pain points, establish baseline
+2. **Document** — Create documentation layer AI can navigate
+3. **Guard** — Set up hooks and guardrails to prevent breakage
+4. **Specialise** — Install focused skills for each task type
+5. **Workflow** — Define repeatable quality pipelines
+6. **Iterate** — Progressive improvement, cycle by cycle
 
-## Specialised Agents
+## Skills
 
-- `@codebase-qa` — Knowledge: answers questions about codebase
-- `@impact-analyser` — Safety: predicts what breaks before changes
-- `@feature-planner` — Planning: produces file-by-file implementation plans
-- `@feature-implementer` — Building: writes files following conventions
-- `@preflight` — QA: ESLint + TypeScript + production build gate
-- `@reviewer` — Review: reviews diffs, reports by severity
-- `@committer` — Git: proposes logical commit breakdowns
-- `@documenter` — Docs: generates architecture docs with diagrams
+- **codebase-qa** — Answers questions about codebase architecture
+- **impact-analyser** — Predicts blast radius before changes
+- **feature-planner** — Produces file-by-file implementation plans
+- **feature-implementer** — Writes files following project conventions
+- **preflight** — Quality gate: lint, type-check, build
+- **reviewer** — Reviews diffs with severity ratings
+- **committer** — Logical commit breakdown
+- **documenter** — Architecture docs with diagrams
 
 ## Workflows
 
-- **Simple** (1–3 files): Understand → Impact check → Change → Preflight → Review → Commit
-- **Complex** (multi-layer): Plan → Implement → QA → Review → Commit → Document
+- **Simple** (1-3 files): understand → impact → change → preflight → review → commit
+- **Complex** (multi-layer): plan → implement → QA → review → commit → document
 
-## Documentation Structure
+## Compatibility
 
-```
-project/
-├── CLAUDE.md          # Agent conventions & rules
-├── AGENTS.md          # Agent definitions & skills
-├── docs/
-│   ├── requirements/  # What needs to be built
-│   ├── plans/         # How it will be built
-│   ├── features/      # What was built
-│   └── manual/        # How everything works
-├── .hooks/            # Pre-commit, access controls
-└── .agents/           # Agent skill definitions
-```
+Works with Claude Code, Cursor, Windsurf, and any AI coding tool that supports skills/instructions.
 
 ## Links
 
-- Website: https://brown2green.dev
-- Author: Jack McNicol (https://jack.mcpickle.com.au)
+- [Website](https://brown2green.dev)
+- [Sign up for free skills](https://brown2green.dev/#signup)
+
+## Creator
+
+Built by [Jack McNicol](https://jack.mcpickle.com.au).
