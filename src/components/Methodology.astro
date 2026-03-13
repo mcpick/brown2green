@@ -1,0 +1,48 @@
+---
+import Section from "@/components/ui/Section.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+import { phases } from "@/lib/data";
+---
+
+<Section id="methodology" bg="surface" width="lg">
+  <SectionHeader subtitle="Methodology" />
+  <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+    Six phases. One&nbsp;transformation.
+  </h2>
+  <p class="mb-16 max-w-lg text-lg text-ink-muted">
+    Each phase builds on the last. Some take days, others weeks. Forward progress, not&nbsp;perfection.
+  </p>
+
+  <div class="space-y-6">
+    {phases.map((phase, i) => {
+      const pct = i / (phases.length - 1);
+      const dotColor = pct < 0.4 ? 'bg-brown' : 'bg-green';
+      return (
+        <details class="group rounded-2xl border border-border bg-white shadow-sm transition-all open:shadow-md open:border-green/30" open={i === 0}>
+          <summary class="flex cursor-pointer items-center gap-5 px-6 py-5 sm:px-8">
+            <span class={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${dotColor} font-mono text-sm font-bold text-white`}>{phase.num}</span>
+            <div class="flex-1">
+              <h3 class="font-display text-xl">{phase.title}</h3>
+              <p class="text-sm text-ink-muted">{phase.desc}</p>
+            </div>
+            <svg class="h-5 w-5 shrink-0 text-ink-faint transition-transform group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+          <div class="border-t border-border px-6 pb-6 pt-5 sm:px-8">
+            <ul class="mb-5 grid gap-2 sm:grid-cols-2">
+              {phase.details.map((d) => (
+                <li class="flex items-start gap-2 text-sm text-ink-muted">
+                  <span class="mt-1 text-green">→</span>
+                  <span>{d}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="rounded-xl bg-surface-alt px-5 py-4">
+              <p class="mb-1 font-mono text-[10px] uppercase tracking-wider text-ink-faint">Example prompt</p>
+              <pre class="whitespace-pre-wrap font-mono text-sm text-ink">{phase.prompt}</pre>
+            </div>
+          </div>
+        </details>
+      );
+    })}
+  </div>
+</Section>

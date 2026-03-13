@@ -1,0 +1,32 @@
+---
+import Section from "@/components/ui/Section.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+---
+
+<Section id="get-started" bg="ink" width="md">
+  <SectionHeader subtitle="Get started" subtitleColor="white" />
+  <h2 class="mb-6 font-display text-3xl tracking-tight md:text-4xl">
+    Start with <span class="text-green-soft">Phase&nbsp;01.</span>
+  </h2>
+  <p class="mb-10 max-w-lg text-lg text-white/50">
+    You don't need to transform everything at once. Start by assessing one module. Document it. Add guardrails.&nbsp;Expand.
+  </p>
+
+  <div class="space-y-6 rounded-2xl bg-white/5 p-6 sm:p-8 backdrop-blur-sm border border-white/10">
+    <div>
+      <p class="mb-2 font-mono text-xs text-white/40">Step 1 — Create your conventions</p>
+      <pre class="font-mono text-sm text-green-soft">touch CLAUDE.md AGENTS.md
+mkdir -p docs/requirements docs/plans docs/features docs/manual</pre>
+    </div>
+    <div class="border-t border-white/10 pt-6">
+      <p class="mb-2 font-mono text-xs text-white/40">Step 2 — Assess your first module</p>
+      <pre class="font-mono text-sm text-green-soft">@codebase-qa Give me an overview of the auth module.
+What are its dependencies, side effects, and implicit conventions?</pre>
+    </div>
+    <div class="border-t border-white/10 pt-6">
+      <p class="mb-2 font-mono text-xs text-white/40">Step 3 — Document what you find</p>
+      <pre class="font-mono text-sm text-green-soft">@documenter auth-module
+→ Generates architecture doc at docs/features/auth-module.md</pre>
+    </div>
+  </div>
+</Section>

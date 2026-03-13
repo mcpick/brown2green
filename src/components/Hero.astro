@@ -1,0 +1,27 @@
+---
+import ParallaxLayer from "@/components/ui/ParallaxLayer.astro";
+---
+
+<ParallaxLayer image="/images/brown-hills.png" minHeight="min-h-screen" class="flex flex-col items-center justify-center px-4 sm:px-6">
+  <div class="absolute inset-0 bg-gradient-to-b from-white/40 via-white/20 to-white/70"></div>
+  <div class="relative z-10 mx-auto w-full max-w-3xl text-center pt-14">
+    <p class="mb-4 animate-fade-in font-mono text-xs uppercase tracking-[0.3em] text-brown" style="animation-delay: 0ms">
+      AI-ready codebase methodology
+    </p>
+    <h1 class="mb-6 animate-fade-up font-display text-5xl leading-[1.08] tracking-tight sm:text-7xl md:text-8xl" style="animation-delay: 100ms">
+      <span class="text-brown">Brown</span> to <span class="text-green">Green</span>
+    </h1>
+    <p class="mx-auto mb-10 max-w-lg animate-fade-up text-lg leading-relaxed text-ink-muted" style="animation-delay: 200ms">
+      Turn your brownfield codebase into an AI-ready project. Specialised agents, guardrails, and workflows — because bad code that's been around long enough starts looking&nbsp;normal.
+    </p>
+    <div class="animate-fade-up" style="animation-delay: 300ms">
+      <a href="#methodology" class="inline-flex items-center gap-2 rounded-full bg-ink/90 px-8 py-4 font-mono text-sm font-bold text-white shadow-lg shadow-ink/10 transition-all hover:bg-ink hover:shadow-xl active:scale-95 no-underline">
+        See the methodology
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+      </a>
+    </div>
+    <p class="mt-6 animate-fade-up font-mono text-xs text-ink-faint" style="animation-delay: 400ms">
+      Works with Claude Code · Cursor · Windsurf · Any AI coding&nbsp;agent
+    </p>
+  </div>
+</ParallaxLayer>

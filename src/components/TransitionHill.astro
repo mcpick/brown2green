@@ -1,0 +1,15 @@
+---
+import ParallaxLayer from "@/components/ui/ParallaxLayer.astro";
+---
+
+<ParallaxLayer image="/images/transition-hill.png" minHeight="min-h-[60vh]">
+  <div class="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-white/80"></div>
+  <div class="relative z-10 flex min-h-[60vh] items-center justify-center px-4 sm:px-6">
+    <div class="text-center">
+      <h2 class="font-display text-4xl tracking-tight text-ink md:text-5xl">
+        The grass <em class="text-green">can</em> be&nbsp;greener.
+      </h2>
+      <p class="mt-4 text-lg text-ink-muted">Step by step. Iteration by&nbsp;iteration.</p>
+    </div>
+  </div>
+</ParallaxLayer>

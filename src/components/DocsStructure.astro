@@ -1,0 +1,27 @@
+---
+import Section from "@/components/ui/Section.astro";
+import SectionHeader from "@/components/ui/SectionHeader.astro";
+---
+
+<Section bg="white" width="md">
+  <SectionHeader subtitle="Documentation" />
+  <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+    Structure agents can&nbsp;navigate.
+  </h2>
+  <p class="mb-12 text-lg text-ink-muted">
+    AI agents need explicit documentation, not tribal&nbsp;knowledge.
+  </p>
+
+  <div class="rounded-2xl border border-border bg-surface p-6 sm:p-8 shadow-sm">
+    <pre class="font-mono text-sm leading-loose text-ink"><span class="text-ink-faint">project/</span>
+├── <span class="text-green font-bold">CLAUDE.md</span>            <span class="text-ink-faint"># Agent conventions & rules</span>
+├── <span class="text-green font-bold">AGENTS.md</span>            <span class="text-ink-faint"># Agent definitions & skills</span>
+├── <span class="text-green font-bold">docs/</span>
+│   ├── <span class="text-brown">requirements/</span>    <span class="text-ink-faint"># What needs to be built</span>
+│   ├── <span class="text-brown">plans/</span>           <span class="text-ink-faint"># How it will be built</span>
+│   ├── <span class="text-green">features/</span>        <span class="text-ink-faint"># What was built</span>
+│   └── <span class="text-green">manual/</span>          <span class="text-ink-faint"># How everything works</span>
+├── <span class="text-ink-muted">.hooks/</span>              <span class="text-ink-faint"># Pre-commit, access controls</span>
+└── <span class="text-ink-muted">.agents/</span>             <span class="text-ink-faint"># Agent skill definitions</span></pre>
+  </div>
+</Section>

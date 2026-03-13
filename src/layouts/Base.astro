@@ -11,6 +11,21 @@ const {
   description = "Turn your brownfield codebase into an AI-ready project. A step-by-step methodology with skills, prompts, and workflows for making legacy code work with AI agents.",
 } = Astro.props;
 
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Brown2Green",
+  url: "https://brown2green.dev",
+  description,
+  founder: {
+    "@type": "Person",
+    name: "Jack McNicol",
+    url: "https://jack.mcpickle.com.au",
+  },
+};
+
 import '@/styles/global.css'
 ---
 
@@ -21,10 +36,12 @@ import '@/styles/global.css'
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -36,6 +53,8 @@ import '@/styles/global.css'
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <ClientRouter />
   </head>
