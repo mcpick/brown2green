@@ -1,0 +1,56 @@
+---
+---
+
+<header class="fixed top-0 z-30 w-full border-b border-border/60 bg-surface/80 backdrop-blur-lg">
+  <div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
+    <a href="/" class="flex items-center gap-1 font-mono text-lg font-bold tracking-tight no-underline" aria-label="Brown2Green home">
+      <span class="text-brown">Brown</span><span class="text-ink-faint">2</span><span class="text-green">Green</span>
+    </a>
+
+    <nav class="hidden items-center gap-6 text-sm font-medium text-ink-muted md:flex" aria-label="Main navigation">
+      <a href="#methodology" class="transition-colors hover:text-ink">Methodology</a>
+      <a href="#workflows" class="transition-colors hover:text-ink">Workflows</a>
+      <a href="#agents" class="transition-colors hover:text-ink">Agents</a>
+      <a href="#getting-started" class="inline-flex items-center rounded-lg bg-ink px-4 py-1.5 font-mono text-sm font-bold text-surface transition-all hover:bg-green active:scale-95 no-underline">
+        Get started
+      </a>
+    </nav>
+
+    <!-- Mobile menu button -->
+    <button
+      id="mobile-menu-btn"
+      class="flex cursor-pointer items-center justify-center rounded-lg p-2 text-ink-muted transition-colors hover:text-ink md:hidden"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <!-- Mobile nav -->
+  <nav id="mobile-menu" class="hidden border-t border-border bg-surface px-6 py-4 md:hidden" aria-label="Mobile navigation">
+    <div class="flex flex-col gap-3 text-sm font-medium text-ink-muted">
+      <a href="#methodology" class="py-1">Methodology</a>
+      <a href="#workflows" class="py-1">Workflows</a>
+      <a href="#agents" class="py-1">Agents</a>
+      <a href="#getting-started" class="mt-1 w-full rounded-lg bg-ink px-4 py-2.5 text-center font-mono text-sm font-bold text-surface no-underline transition-all hover:bg-green">
+        Get started
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const btn = document.getElementById("mobile-menu-btn")!;
+  const menu = document.getElementById("mobile-menu")!;
+  btn.addEventListener("click", () => {
+    const open = menu.classList.toggle("hidden");
+    btn.setAttribute("aria-expanded", String(!open));
+  });
+  menu.querySelectorAll("a").forEach((a) => {
+    a.addEventListener("click", () => {
+      menu.classList.add("hidden");
+      btn.setAttribute("aria-expanded", "false");
+    });
+  });
+</script>

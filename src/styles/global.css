@@ -1,0 +1,54 @@
+@import 'tailwindcss';
+
+@theme {
+    --font-display: 'Instrument Serif', serif;
+    --font-body: 'Satoshi', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    /* Brown to Green palette */
+    --color-surface: oklch(0.985 0.005 85);
+    --color-surface-alt: oklch(0.965 0.008 85);
+    --color-ink: oklch(0.18 0.02 50);
+    --color-ink-muted: oklch(0.48 0.03 55);
+    --color-ink-faint: oklch(0.64 0.02 55);
+    --color-border: oklch(0.90 0.008 75);
+    --color-border-strong: oklch(0.82 0.012 75);
+
+    /* Brown (brownfield) */
+    --color-brown: oklch(0.50 0.12 55);
+    --color-brown-light: oklch(0.50 0.12 55 / 0.1);
+    --color-brown-muted: oklch(0.62 0.08 55);
+
+    /* Green (greenfield) */
+    --color-green: oklch(0.55 0.20 145);
+    --color-green-light: oklch(0.55 0.20 145 / 0.1);
+    --color-green-muted: oklch(0.62 0.14 145);
+
+    /* Accent — for interactive elements */
+    --color-accent: oklch(0.55 0.22 155);
+    --color-accent-light: oklch(0.55 0.22 155 / 0.08);
+
+    /* Status */
+    --color-pass: oklch(0.62 0.19 145);
+    --color-warn: oklch(0.72 0.16 75);
+    --color-fail: oklch(0.55 0.22 25);
+
+    /* Easing */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Animations */
+    --animate-fade-up: fade-up 0.7s var(--ease-out-expo) both;
+    --animate-fade-in: fade-in 0.5s var(--ease-out-expo) both;
+    --animate-slide-in: slide-in 0.6s var(--ease-out-expo) both;
+}
+
+@keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+}
+@keyframes fade-in {
+    from { opacity: 0; }
+}
+@keyframes slide-in {
+    from { opacity: 0; transform: translateX(-16px); }
+}

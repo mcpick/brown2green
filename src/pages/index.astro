@@ -1,0 +1,450 @@
+---
+import Base from "@/layouts/Base.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+
+const phases = [
+  {
+    num: "01",
+    title: "Assess",
+    color: "brown",
+    desc: "Understand the current state of your codebase. Map the architecture, identify pain points, and establish a baseline for AI readiness.",
+    details: [
+      "Run module-overview scans across your codebase",
+      "Identify tightly-coupled components AI agents will struggle with",
+      "Document implicit knowledge that only lives in developers' heads",
+      "Establish conventions files (CLAUDE.md, AGENTS.md) as the single source of truth",
+    ],
+    prompt: "@codebase-qa How does [module] work? What are its dependencies and side effects?",
+  },
+  {
+    num: "02",
+    title: "Document",
+    color: "brown-muted",
+    desc: "Create the documentation layer that makes your codebase navigable by AI agents. Requirements, plans, features, and manuals.",
+    details: [
+      "Create a docs/ folder: requirements/, plans/, features/, manual/",
+      "Document existing features with architecture docs and Mermaid diagrams",
+      "Write a project manual showing how everything connects",
+      "Define coding conventions, naming patterns, and file structure rules",
+    ],
+    prompt: "@documenter CCG-XXX\n→ Generates feature architecture doc with diagrams, data flows, and deployment steps",
+  },
+  {
+    num: "03",
+    title: "Guard",
+    color: "green-muted",
+    desc: "Set up hooks and guardrails that prevent AI agents from breaking things. Linting, type-checking, build verification, and access controls.",
+    details: [
+      "Configure pre-commit hooks for lint, type-check, and build",
+      "Define file access boundaries — which areas agents can and can't touch",
+      "Set up preflight checks that run before any commit",
+      "Create impact analysis tooling to predict blast radius of changes",
+    ],
+    prompt: "@impact-analyser [file or type you're about to change]\n→ Shows what will break before you touch it",
+  },
+  {
+    num: "04",
+    title: "Specialise",
+    color: "green-muted",
+    desc: "Build specialised sub-agents with focused skills. Each agent owns a specific domain — keeping context lean and output precise.",
+    details: [
+      "Create task-specific agents: planner, implementer, reviewer, committer, documenter",
+      "Give each agent only the context it needs — no 200k token sprawl",
+      "Define slash commands for common operations (boilerplate, migrations, etc.)",
+      "Build project-specific skills tailored to your stack and conventions",
+    ],
+    prompt: "@feature-planner [describe the feature]\n→ Studies existing patterns, produces a file-by-file implementation plan",
+  },
+  {
+    num: "05",
+    title: "Workflow",
+    color: "green",
+    desc: "Define repeatable workflows for simple and complex features. Every change follows the same quality pipeline — plan, implement, QA, review, commit, document.",
+    details: [
+      "Simple features: understand → impact check → change → preflight → review → commit",
+      "Complex features: plan → implement → QA → review → commit → document",
+      "Every workflow ends with documentation — future agents need context too",
+      "Iterate — some steps take many passes to get right, and that's expected",
+    ],
+    prompt: "@committer\n→ Analyses changes, proposes logical commit breakdown, executes on 'go'",
+  },
+  {
+    num: "06",
+    title: "Iterate",
+    color: "green",
+    desc: "This isn't a one-shot migration. Each cycle improves AI readiness. Bad code that's normalised gets identified and refactored progressively.",
+    details: [
+      "Run regular codebase health checks with AI agents",
+      "Identify 'normalised bad code' — patterns everyone accepts but agents struggle with",
+      "Refactor incrementally — each PR makes the next PR easier for agents",
+      "Measure improvement: fewer agent errors, faster feature delivery, better code quality",
+    ],
+    prompt: "@reviewer\n→ Reviews full branch diff, reports issues by severity, gives merge verdict",
+  },
+];
+
+const agents = [
+  {
+    name: "codebase-qa",
+    role: "Knowledge",
+    desc: "Answers questions about how any part of the codebase works. Your entry point for understanding.",
+    usage: "@codebase-qa How does the auth flow work?",
+  },
+  {
+    name: "impact-analyser",
+    role: "Safety",
+    desc: "Predicts what will break before you change anything. Maps dependencies and blast radius.",
+    usage: "@impact-analyser src/auth/login.ts",
+  },
+  {
+    name: "feature-planner",
+    role: "Planning",
+    desc: "Studies existing patterns and produces file-by-file implementation plans for new features.",
+    usage: "@feature-planner Add SSO support via SAML",
+  },
+  {
+    name: "feature-implementer",
+    role: "Building",
+    desc: "Writes all files following project conventions. Runs type-check, lint, and build on completion.",
+    usage: "@feature-implementator docs/plans/CCG-123.md",
+  },
+  {
+    name: "preflight",
+    role: "QA",
+    desc: "Runs ESLint, TypeScript, and production build in sequence. Your quality gate before commit.",
+    usage: "@preflight",
+  },
+  {
+    name: "reviewer",
+    role: "Review",
+    desc: "Reviews branch diff against production. Reports issues by severity — blocker, should-fix, nit.",
+    usage: "@reviewer",
+  },
+  {
+    name: "committer",
+    role: "Git",
+    desc: "Analyses changes and proposes logical commit breakdown. Review plan, say 'go', done.",
+    usage: "@committer",
+  },
+  {
+    name: "documenter",
+    role: "Docs",
+    desc: "Generates feature architecture docs with Mermaid diagrams, data flows, and deployment steps.",
+    usage: "@documenter CCG-123",
+  },
+];
+
+const simpleSteps = [
+  { num: "1", title: "Understand", desc: "Scan the area you're about to change", cmd: "/module-overview ModuleName" },
+  { num: "2", title: "Impact check", desc: "Predict what will break", cmd: "@impact-analyser [target]" },
+  { num: "3", title: "Change", desc: "Make the edit (1-3 files)", cmd: "(edit directly)" },
+  { num: "4", title: "Preflight", desc: "Run quality checks", cmd: "@preflight" },
+  { num: "5", title: "Review", desc: "Fix blockers before commit", cmd: "@reviewer" },
+  { num: "6", title: "Commit", desc: "Structured commit", cmd: "@committer → 'go'" },
+];
+
+const complexSteps = [
+  { num: "1", title: "Plan", desc: "Study existing patterns, produce implementation plan", agent: "feature-planner" },
+  { num: "2", title: "Implement", desc: "Write all files following conventions, verify build", agent: "feature-implementer" },
+  { num: "3", title: "QA", desc: "ESLint + TypeScript + production build", agent: "preflight" },
+  { num: "4", title: "Review", desc: "Full diff review with severity ratings", agent: "reviewer" },
+  { num: "5", title: "Commit", desc: "Logical commit breakdown", agent: "committer" },
+  { num: "6", title: "Document", desc: "Architecture doc with diagrams", agent: "documenter" },
+];
+---
+
+<Base title="Brown2Green — Make your brownfield codebase AI-ready">
+  <Header />
+  <main>
+
+    <!-- ─── Hero ─────────────────────────────────────────────── -->
+    <section class="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-6 pt-14">
+      <!-- Grid bg -->
+      <div
+        class="pointer-events-none absolute inset-0 bg-[linear-gradient(var(--color-border)_1px,transparent_1px),linear-gradient(90deg,var(--color-border)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_40%,black_20%,transparent_100%)]"
+        aria-hidden="true"
+      ></div>
+
+      <!-- Gradient accent bg element -->
+      <div
+        class="pointer-events-none absolute inset-0 bg-gradient-to-r from-brown-light via-transparent to-green-light opacity-40"
+        aria-hidden="true"
+      ></div>
+
+      <div class="relative z-10 mx-auto w-full max-w-3xl text-center">
+        <p class="mb-5 animate-fade-in font-mono text-xs uppercase tracking-[0.25em] text-ink-muted" style="animation-delay: 0ms">
+          AI-ready codebase methodology
+        </p>
+
+        <h1 class="mb-6 animate-fade-up font-display text-4xl leading-[1.05] tracking-tight sm:text-6xl md:text-8xl" style="animation-delay: 80ms">
+          <span class="text-brown">Brown</span> to <span class="text-green">Green</span>
+        </h1>
+
+        <p class="mx-auto mb-10 max-w-lg animate-fade-up text-base text-ink-muted sm:text-lg md:text-xl" style="animation-delay: 160ms">
+          Turn your brownfield codebase into an AI-ready project. A step-by-step methodology with specialised agents, guardrails, and workflows — because bad code that's been around long enough starts looking&nbsp;normal.
+        </p>
+
+        <div class="flex animate-fade-up items-center justify-center gap-4" style="animation-delay: 240ms">
+          <a href="#methodology" class="inline-flex items-center gap-2 rounded-xl border-2 border-ink bg-ink px-8 py-3.5 font-mono text-sm font-bold text-surface shadow-[4px_4px_0px_0px_var(--color-green)] transition-all hover:shadow-[6px_6px_0px_0px_var(--color-green)] active:scale-95 no-underline">
+            See the methodology
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+          </a>
+          <a href="#getting-started" class="inline-flex items-center rounded-xl border-2 border-border bg-surface px-6 py-3.5 font-mono text-sm font-bold text-ink transition-all hover:border-ink active:scale-95 no-underline">
+            Get started
+          </a>
+        </div>
+
+        <p class="mt-6 animate-fade-up font-mono text-xs text-ink-faint" style="animation-delay: 320ms">
+          Works with Claude Code · Cursor · Windsurf · Any AI coding agent
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── The Problem ──────────────────────────────────────── -->
+    <section class="border-t border-border bg-surface-alt px-6 py-28">
+      <div class="mx-auto max-w-3xl">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-brown">The problem</p>
+        <h2 class="mb-8 font-display text-3xl tracking-tight md:text-4xl">
+          Your code works. <em class="text-brown">Your agents can't work with&nbsp;it.</em>
+        </h2>
+        <div class="space-y-6 text-lg leading-relaxed text-ink-muted">
+          <p>
+            Brownfield codebases have a unique problem: the bad patterns have been there so long they look normal. Implicit conventions, undocumented side effects, tightly-coupled modules — humans learned to navigate these over years. AI agents see chaos.
+          </p>
+          <p>
+            You can't just drop an AI agent into a legacy codebase and expect it to ship features. It needs <strong class="text-ink">explicit conventions</strong>, <strong class="text-ink">documented architecture</strong>, <strong class="text-ink">guardrails</strong>, and <strong class="text-ink">specialised context</strong> — not the entire 200k-token codebase crammed into one prompt.
+          </p>
+          <p>
+            Brown2Green is the methodology for getting there. Step by step. Iteration by iteration. Until the grass really is greener.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Methodology (6 phases) ───────────────────────────── -->
+    <section id="methodology" class="border-t border-border px-6 py-28">
+      <div class="mx-auto max-w-5xl">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">Methodology</p>
+        <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+          Six phases. <em class="text-green">One&nbsp;transformation.</em>
+        </h2>
+        <p class="mb-16 max-w-xl text-lg text-ink-muted">
+          Each phase builds on the last. Some take days, others take weeks. The point is forward progress — not perfection on the first pass.
+        </p>
+
+        <div class="space-y-8">
+          {phases.map((phase) => (
+            <div class="group rounded-xl border-2 border-border bg-white transition-all hover:border-ink hover:shadow-[4px_4px_0px_0px_var(--color-border-strong)]">
+              <div class="p-6 sm:p-8">
+                <div class="mb-4 flex items-center gap-4">
+                  <span class={`font-mono text-sm font-bold text-${phase.color}`}>{phase.num}</span>
+                  <h3 class="font-display text-2xl">{phase.title}</h3>
+                  <div class={`h-px flex-1 bg-gradient-to-r from-${phase.color}/30 to-transparent`}></div>
+                </div>
+                <p class="mb-6 text-ink-muted">{phase.desc}</p>
+                <ul class="mb-6 grid gap-2 sm:grid-cols-2">
+                  {phase.details.map((d) => (
+                    <li class="flex items-start gap-2.5 text-sm">
+                      <span class={`mt-0.5 text-${phase.color}`} aria-hidden="true">→</span>
+                      <span class="text-ink-muted">{d}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div class="rounded-lg border border-border bg-surface-alt px-4 py-3">
+                  <p class="font-mono text-xs text-ink-faint mb-1">Example prompt</p>
+                  <pre class="whitespace-pre-wrap font-mono text-sm text-ink">{phase.prompt}</pre>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Workflows ────────────────────────────────────────── -->
+    <section id="workflows" class="border-t border-border bg-surface-alt px-6 py-28">
+      <div class="mx-auto max-w-5xl">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">Workflows</p>
+        <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+          Two paths. <em class="text-green">Same quality bar.</em>
+        </h2>
+        <p class="mb-16 max-w-xl text-lg text-ink-muted">
+          Every change follows a structured pipeline. Simple features are fast. Complex features get the full treatment. Both end with documentation.
+        </p>
+
+        <div class="grid gap-8 lg:grid-cols-2">
+          <!-- Simple workflow -->
+          <div class="rounded-xl border-2 border-border bg-white p-6 sm:p-8">
+            <div class="mb-6 flex items-center gap-3">
+              <span class="rounded-lg bg-green-light px-3 py-1 font-mono text-xs font-bold text-green">SIMPLE</span>
+              <h3 class="font-display text-xl">1–3 files, well-understood area</h3>
+            </div>
+            <div class="space-y-4">
+              {simpleSteps.map((step) => (
+                <div class="flex items-start gap-4">
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-green bg-green-light font-mono text-xs font-bold text-green">{step.num}</span>
+                  <div class="flex-1">
+                    <div class="flex items-baseline gap-2">
+                      <span class="font-bold text-sm">{step.title}</span>
+                      <span class="text-xs text-ink-faint">— {step.desc}</span>
+                    </div>
+                    <code class="mt-1 block font-mono text-xs text-green">{step.cmd}</code>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <!-- Complex workflow -->
+          <div class="rounded-xl border-2 border-ink bg-white p-6 shadow-[4px_4px_0px_0px_var(--color-ink)] sm:p-8">
+            <div class="mb-6 flex items-center gap-3">
+              <span class="rounded-lg bg-ink px-3 py-1 font-mono text-xs font-bold text-surface">COMPLEX</span>
+              <h3 class="font-display text-xl">Multi-layer feature</h3>
+            </div>
+            <div class="space-y-4">
+              {complexSteps.map((step) => (
+                <div class="flex items-start gap-4">
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-ink bg-ink font-mono text-xs font-bold text-surface">{step.num}</span>
+                  <div class="flex-1">
+                    <div class="flex items-baseline gap-2">
+                      <span class="font-bold text-sm">{step.title}</span>
+                      <span class="text-xs text-ink-faint">— {step.desc}</span>
+                    </div>
+                    <code class="mt-1 block font-mono text-xs text-ink-muted">@{step.agent}</code>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div class="mt-6 rounded-lg border border-border bg-surface-alt px-4 py-3">
+              <p class="font-mono text-xs text-ink-muted">
+                💡 Some steps take many iterations. The planner may raise open questions. The reviewer may flag blockers. That's the system working — not failing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Agent Gallery ────────────────────────────────────── -->
+    <section id="agents" class="border-t border-border px-6 py-28">
+      <div class="mx-auto max-w-5xl">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">Agents</p>
+        <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+          Specialised agents. <em class="text-green">Lean&nbsp;context.</em>
+        </h2>
+        <p class="mb-16 max-w-xl text-lg text-ink-muted">
+          One agent per job. Each gets only the context it needs — not your entire codebase. The orchestrator stays lean, the specialists go deep.
+        </p>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {agents.map((agent) => (
+            <div class="group rounded-xl border-2 border-border bg-white p-5 transition-all hover:border-ink hover:shadow-[3px_3px_0px_0px_var(--color-ink)]">
+              <div class="mb-2 flex items-center gap-2">
+                <span class="rounded bg-green-light px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-green">{agent.role}</span>
+              </div>
+              <h3 class="mb-1 font-mono text-sm font-bold">@{agent.name}</h3>
+              <p class="mb-3 text-xs leading-relaxed text-ink-muted">{agent.desc}</p>
+              <code class="block rounded bg-surface-alt px-2 py-1 font-mono text-[11px] text-ink-faint">{agent.usage}</code>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Docs Structure ───────────────────────────────────── -->
+    <section class="border-t border-border bg-surface-alt px-6 py-28">
+      <div class="mx-auto max-w-3xl">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">Documentation layer</p>
+        <h2 class="mb-4 font-display text-3xl tracking-tight md:text-4xl">
+          Structure that <em class="text-green">agents can navigate.</em>
+        </h2>
+        <p class="mb-12 text-lg text-ink-muted">
+          AI agents need explicit documentation, not tribal knowledge. This folder structure becomes the single source of truth.
+        </p>
+
+        <div class="rounded-xl border-2 border-ink bg-white p-6 shadow-[4px_4px_0px_0px_var(--color-ink)] sm:p-8">
+          <pre class="font-mono text-sm leading-loose text-ink"><span class="text-ink-faint">project/</span>
+├── <span class="text-green font-bold">CLAUDE.md</span>            <span class="text-ink-faint"># Agent conventions & rules</span>
+├── <span class="text-green font-bold">AGENTS.md</span>            <span class="text-ink-faint"># Agent definitions & skills</span>
+├── <span class="text-green font-bold">docs/</span>
+│   ├── <span class="text-brown-muted">requirements/</span>    <span class="text-ink-faint"># What needs to be built</span>
+│   ├── <span class="text-brown-muted">plans/</span>           <span class="text-ink-faint"># How it will be built</span>
+│   │   └── <span class="text-ink-muted">CCG-123-feature.md</span>
+│   ├── <span class="text-green-muted">features/</span>        <span class="text-ink-faint"># What was built (architecture docs)</span>
+│   │   └── <span class="text-ink-muted">CCG-123-feature.md</span>
+│   └── <span class="text-green-muted">manual/</span>          <span class="text-ink-faint"># How everything works together</span>
+├── <span class="text-ink-muted">.hooks/</span>              <span class="text-ink-faint"># Pre-commit, access controls</span>
+└── <span class="text-ink-muted">.agents/</span>             <span class="text-ink-faint"># Agent skill definitions</span></pre>
+        </div>
+
+        <div class="mt-8 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-lg border border-border bg-white p-5">
+            <h4 class="mb-2 font-mono text-sm font-bold text-brown">requirements/</h4>
+            <p class="text-sm text-ink-muted">What needs to be built. Jira tickets, specs, user stories translated into markdown.</p>
+          </div>
+          <div class="rounded-lg border border-border bg-white p-5">
+            <h4 class="mb-2 font-mono text-sm font-bold text-brown-muted">plans/</h4>
+            <p class="text-sm text-ink-muted">How it will be built. File-by-file implementation plans with open questions resolved.</p>
+          </div>
+          <div class="rounded-lg border border-border bg-white p-5">
+            <h4 class="mb-2 font-mono text-sm font-bold text-green-muted">features/</h4>
+            <p class="text-sm text-ink-muted">What was built. Architecture docs with Mermaid diagrams, data flows, admin config.</p>
+          </div>
+          <div class="rounded-lg border border-border bg-white p-5">
+            <h4 class="mb-2 font-mono text-sm font-bold text-green">manual/</h4>
+            <p class="text-sm text-ink-muted">How everything works together. The reference that future agents (and humans) read first.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─── Key Principle ────────────────────────────────────── -->
+    <section class="border-t border-border px-6 py-28">
+      <div class="mx-auto max-w-3xl text-center">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-ink-muted">Key principle</p>
+        <h2 class="mb-8 font-display text-3xl tracking-tight md:text-5xl">
+          Bad code that's been around<br />long enough starts looking <em class="text-brown">normal.</em>
+        </h2>
+        <p class="mx-auto max-w-lg text-lg leading-relaxed text-ink-muted">
+          AI agents don't have the institutional memory to know which patterns are intentional and which are accidents that stuck. Brown2Green makes the implicit explicit — so agents can tell the difference.
+        </p>
+      </div>
+    </section>
+
+    <!-- ─── Getting Started ──────────────────────────────────── -->
+    <section id="getting-started" class="relative border-t border-border bg-ink px-6 py-28 text-surface overflow-hidden">
+      <div class="pointer-events-none absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%270 0 256 256%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cfilter id=%27noise%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%270.9%27 numOctaves=%274%27 stitchTiles=%27stitch%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23noise)%27/%3E%3C/svg%3E')" aria-hidden="true"></div>
+
+      <div class="relative mx-auto max-w-3xl">
+        <p class="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-stone-500">Get started</p>
+        <h2 class="mb-6 font-display text-3xl tracking-tight md:text-5xl">
+          Start with <em class="text-green">Phase&nbsp;01.</em>
+        </h2>
+        <p class="mb-10 max-w-lg text-lg text-stone-400">
+          You don't need to transform everything at once. Start by assessing one module. Document it. Add guardrails. Then expand. Each iteration makes the next one easier.
+        </p>
+
+        <div class="rounded-xl border-2 border-stone-700 bg-stone-900 p-6 sm:p-8">
+          <p class="mb-4 font-mono text-xs text-stone-500">Step 1 — Create your conventions file</p>
+          <pre class="mb-6 font-mono text-sm text-green">touch CLAUDE.md AGENTS.md
+mkdir -p docs/requirements docs/plans docs/features docs/manual</pre>
+
+          <p class="mb-4 font-mono text-xs text-stone-500">Step 2 — Assess your first module</p>
+          <pre class="mb-6 font-mono text-sm text-green">@codebase-qa Give me an overview of the auth module.
+What are its dependencies, side effects, and implicit conventions?</pre>
+
+          <p class="mb-4 font-mono text-xs text-stone-500">Step 3 — Document what you find</p>
+          <pre class="font-mono text-sm text-green">@documenter auth-module
+→ Generates architecture doc at docs/features/auth-module.md</pre>
+        </div>
+
+        <p class="mt-8 font-mono text-xs text-stone-500">
+          The grass gets greener with every commit. 🌱
+        </p>
+      </div>
+    </section>
+
+  </main>
+  <Footer />
+</Base>
