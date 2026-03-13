@@ -1,22 +1,21 @@
 ---
 ---
 
-<header class="fixed top-0 z-30 w-full border-b border-border/60 bg-surface/80 backdrop-blur-lg">
+<header class="fixed top-0 z-50 w-full bg-white/70 backdrop-blur-xl border-b border-brown-soft/30">
   <div class="mx-auto flex h-14 max-w-5xl items-center justify-between px-6">
-    <a href="/" class="flex items-center gap-1 font-mono text-lg font-bold tracking-tight no-underline" aria-label="Brown2Green home">
-      <span class="text-brown">Brown</span><span class="text-ink-faint">2</span><span class="text-green">Green</span>
+    <a href="/" class="flex items-center gap-1.5 font-display text-xl tracking-tight no-underline" aria-label="Brown2Green home">
+      <span class="text-brown">Brown</span><span class="text-ink-faint font-mono text-base">→</span><span class="text-green">Green</span>
     </a>
 
-    <nav class="hidden items-center gap-6 text-sm font-medium text-ink-muted md:flex" aria-label="Main navigation">
+    <nav class="hidden items-center gap-8 text-sm font-medium text-ink-muted md:flex" aria-label="Main navigation">
       <a href="#methodology" class="transition-colors hover:text-ink">Methodology</a>
       <a href="#workflows" class="transition-colors hover:text-ink">Workflows</a>
       <a href="#agents" class="transition-colors hover:text-ink">Agents</a>
-      <a href="#getting-started" class="inline-flex items-center rounded-lg bg-ink px-4 py-1.5 font-mono text-sm font-bold text-surface transition-all hover:bg-green active:scale-95 no-underline">
+      <a href="#get-started" class="rounded-full bg-green px-5 py-2 text-sm font-bold text-white transition-all hover:bg-green/90 active:scale-95 no-underline">
         Get started
       </a>
     </nav>
 
-    <!-- Mobile menu button -->
     <button
       id="mobile-menu-btn"
       class="flex cursor-pointer items-center justify-center rounded-lg p-2 text-ink-muted transition-colors hover:text-ink md:hidden"
@@ -27,15 +26,12 @@
     </button>
   </div>
 
-  <!-- Mobile nav -->
-  <nav id="mobile-menu" class="hidden border-t border-border bg-surface px-6 py-4 md:hidden" aria-label="Mobile navigation">
+  <nav id="mobile-menu" class="hidden border-t border-border bg-white/95 backdrop-blur-xl px-6 py-4 md:hidden">
     <div class="flex flex-col gap-3 text-sm font-medium text-ink-muted">
       <a href="#methodology" class="py-1">Methodology</a>
       <a href="#workflows" class="py-1">Workflows</a>
       <a href="#agents" class="py-1">Agents</a>
-      <a href="#getting-started" class="mt-1 w-full rounded-lg bg-ink px-4 py-2.5 text-center font-mono text-sm font-bold text-surface no-underline transition-all hover:bg-green">
-        Get started
-      </a>
+      <a href="#get-started" class="mt-2 w-full rounded-full bg-green px-5 py-2.5 text-center text-sm font-bold text-white no-underline">Get started</a>
     </div>
   </nav>
 </header>
